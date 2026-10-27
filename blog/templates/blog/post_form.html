@@ -1,0 +1,58 @@
+
+{% extends "blog/base.html" %}
+
+{% block title %}{{ page_title }} | InkWell Blog{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-3xl">
+    <div class="mb-8">
+        <h1 class="text-3xl font-extrabold">{{ page_title }}</h1>
+        <p class="mt-2 text-slate-500">Turn your ideas into a story worth reading.</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data"
+          class="space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        {% for field in form %}
+            <div>
+                <label for="{{ field.id_for_label }}"
+                       class="mb-2 block text-sm font-semibold text-slate-700">
+                    {{ field.label }}
+                </label>
+
+                {% if field.name == "image" %}
+                    {% if form.instance.image %}
+                        <img src="{{ form.instance.image.url }}"
+                             alt="Current cover image"
+                             class="mb-3 h-40 rounded-lg object-cover">
+                    {% endif %}
+                    {{ field }}
+                {% else %}
+                    {{ field }}
+                {% endif %}
+
+                {% if field.help_text %}
+                    <p class="mt-1 text-xs text-slate-500">{{ field.help_text }}</p>
+                {% endif %}
+
+                {% for error in field.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <div class="flex flex-wrap gap-3 border-t border-slate-100 pt-5">
+            <button type="submit"
+                    class="rounded-lg bg-indigo-600 px-6 py-3 font-semibold text-white hover:bg-indigo-700">
+                Save blog post
+            </button>
+            <a href="{% url 'home' %}"
+               class="rounded-lg border border-slate-300 px-6 py-3 font-semibold hover:bg-slate-50">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

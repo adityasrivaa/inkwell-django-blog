@@ -1,0 +1,52 @@
+
+{% extends "blog/base.html" %}
+
+{% block title %}Login | InkWell Blog{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+    <h1 class="text-3xl font-extrabold">Welcome back</h1>
+    <p class="mt-2 text-slate-500">Log in to write and comment on stories.</p>
+
+    {% if form.errors %}
+        <p class="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+            Your username or password is incorrect. Please try again.
+        </p>
+    {% endif %}
+
+    <form method="post" class="mt-6 space-y-5">
+        {% csrf_token %}
+
+        {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+
+        <div>
+            <label for="{{ form.username.id_for_label }}" class="mb-2 block font-semibold">
+                Username
+            </label>
+            <input type="text" name="username" id="{{ form.username.id_for_label }}"
+                   autocomplete="username" required autofocus
+                   class="form-input">
+        </div>
+
+        <div>
+            <label for="{{ form.password.id_for_label }}" class="mb-2 block font-semibold">
+                Password
+            </label>
+            <input type="password" name="password" id="{{ form.password.id_for_label }}"
+                   autocomplete="current-password" required
+                   class="form-input">
+        </div>
+
+        <button class="w-full rounded-lg bg-indigo-600 px-5 py-3 font-semibold text-white hover:bg-indigo-700">
+            Login
+        </button>
+    </form>
+
+    <p class="mt-6 text-center text-sm text-slate-600">
+        Don't have an account?
+        <a href="{% url 'register' %}" class="font-semibold text-indigo-600">Register</a>
+    </p>
+</div>
+{% endblock %}

@@ -1,0 +1,129 @@
+
+{% extends "blog/base.html" %}
+
+{% block title %}{{ post.title }} | Django Blog{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-10">
+
+    <article class="bg-white rounded-2xl shadow-sm p-6 md:p-10">
+
+        {% if post.image %}
+            <img
+                src="{{ post.image.url }}"
+                alt="{{ post.title }}"
+                class="w-full max-h-96 object-cover rounded-xl mb-6"
+            >
+        {% endif %}
+
+        <div class="text-sm text-gray-500 mb-3">
+            By {{ post.author.username }}
+            {% if post.category %}
+                · {{ post.category.name }}
+            {% endif %}
+            · {{ post.created_at|date:"M d, Y" }}
+        </div>
+
+        <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-8">
+            {{ post.title }}
+        </h1>
+
+        <div class="prose max-w-none text-gray-700 leading-8
+                    [&_h2]:text-2xl [&_h2]:font-bold
+                    [&_h2]:text-gray-900 [&_h2]:mt-8
+                    [&_h2]:mb-4 [&_p]:mb-5
+                    [&_strong]:font-bold">
+
+            {% if "<h" in post.content or "<p" in post.content %}
+                {{ post.content|safe }}
+            {% else %}
+                {% for paragraph in post.content.splitlines %}
+                    {% with line=paragraph.strip %}
+                        {% if line %}
+                            {% if line == "Introduction" or line == "Why Do People Protest?" or line == "The Importance of Peaceful Protest" or line == "Can Protests Really Bring Change?" or line == "The Role of Young People" or line == "Conclusion" %}
+                                <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">
+                                    {{ line }}
+                                </h2>
+                            {% else %}
+                                <p class="mb-5">{{ line }}</p>
+                            {% endif %}
+                        {% endif %}
+                    {% endwith %}
+                {% endfor %}
+            {% endif %}
+
+        </div>
+
+        {% if request.user == post.author %}
+            <div class="flex gap-3 mt-8">
+                <a href="{% url 'post_edit' post.slug %}"
+                   class="bg-indigo-600 text-white px-4 py-2 rounded-lg">
+                    Edit Post
+                </a>
+
+                <a href="{% url 'post_delete' post.slug %}"
+                   class="bg-red-600 text-white px-4 py-2 rounded-lg">
+                    Delete Post
+                </a>
+            </div>
+        {% endif %}
+
+    </article>
+
+    <section id="comments" class="mt-10">
+        <h2 class="text-2xl font-bold mb-6">Comments</h2>
+
+        {% for comment in comments %}
+            <div class="bg-white rounded-xl p-4 mb-4 shadow-sm">
+                <p class="font-semibold">{{ comment.author.username }}</p>
+
+                <p class="text-sm text-gray-500 mb-2">
+                    {{ comment.created_at|date:"M d, Y H:i" }}
+                </p>
+
+                <p class="text-gray-700">{{ comment.body }}</p>
+
+                {% if request.user == comment.author or request.user == post.author %}
+                    <form method="post"
+                          action="{% url 'comment_delete' comment.pk %}"
+                          class="mt-3">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="text-red-600 hover:underline">
+                            Delete Comment
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        {% empty %}
+            <p class="text-gray-500">
+                No comments yet. Be the first to comment!
+            </p>
+        {% endfor %}
+
+        <div class="bg-white rounded-xl p-6 mt-6 shadow-sm">
+            <h3 class="text-lg font-semibold mb-4">Leave a Comment</h3>
+
+            {% if user.is_authenticated %}
+                <form method="post">
+                    {% csrf_token %}
+                    {{ comment_form.as_p }}
+
+                    <button type="submit"
+                            class="bg-indigo-600 text-white px-5 py-2 rounded-lg mt-3">
+                        Submit Comment
+                    </button>
+                </form>
+            {% else %}
+                <p>
+                    Please
+                    <a href="{% url 'login' %}"
+                       class="text-indigo-600 underline">log in</a>
+                    to leave a comment.
+                </p>
+            {% endif %}
+        </div>
+    </section>
+
+</div>
+{% endblock %}
