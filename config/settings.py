@@ -139,3 +139,27 @@ MAILERS = {
         "BACKEND": "django.core.mail.backends.console.EmailBackend",
     },
 }
+
+
+CKEDITOR_5_CONFIGS = {
+    "default": {
+        "toolbar": [
+            "heading", "|",
+            "bold", "italic", "underline", "|",
+            "link", "bulletedList", "numberedList", "|",
+            "blockQuote", "insertTable", "|",
+            "undo", "redo",
+        ],
+    },
+    "extends": {
+        "toolbar": [
+            "heading", "|",
+            "bold", "italic", "underline", "strikethrough", "|",
+            "link", "bulletedList", "numberedList", "|",
+            "blockQuote", "insertTable", "|",
+            "imageUpload", "undo", "redo",
+        ],
+        "height": 400,
+        "width": "100%",
+    },
+}
