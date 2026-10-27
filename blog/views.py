@@ -1,13 +1,12 @@
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Q
 from django.http import HttpResponseForbidden
 from django.utils.text import slugify
-
-from django.contrib.auth import login
-from django.contrib.auth.forms import UserCreationForm
-# Create your views here.
 
 from .forms import PostForm, CommentForm
 from .models import Post, Category, Comment
@@ -21,7 +20,6 @@ def home(request):
     query = request.GET.get("q", "").strip()
     category_slug = request.GET.get("category", "").strip()
 
-
     if query:
         posts = posts.filter(
             Q(title__icontains=query)
@@ -31,17 +29,21 @@ def home(request):
         )
 
     if category_slug:
-        posts = posts.filter(category__slug = category_slug)
+        posts = posts.filter(category__slug=category_slug)
 
     categories = Category.objects.all()
 
-    context = {
-        "posts": posts,
-        "categories": categories,
-        "query": query,
-        "selected_category": category_slug
-    }
-    return render(request, "blog/home.html", context)
+    return render(
+        request,
+        "blog/home.html",
+        {
+            "posts": posts,
+            "categories": categories,
+            "query": query,
+            "selected_category": category_slug,
+        },
+    )
+
 
 def post_detail(request, slug):
     post = get_object_or_404(
@@ -51,30 +53,48 @@ def post_detail(request, slug):
 
     if request.method == "POST":
         if not request.user.is_authenticated:
+            messages.info(request, "Please log in to comment.")
             return redirect("login")
 
         comment_form = CommentForm(request.POST)
+
         if comment_form.is_valid():
             comment = comment_form.save(commit=False)
             comment.post = post
             comment.author = request.user
             comment.save()
-            messages.success(request, "Comment added successfully.")
-            return redirect(post.get_absolute_url() + "#comments")
+
+            messages.success(
+                request,
+                "Comment added successfully!",
+            )
+
+            return redirect(
+                post.get_absolute_url() + "#comments"
+            )
+
+        messages.error(
+            request,
+            "Please correct the errors in your comment.",
+        )
+
     else:
         comment_form = CommentForm()
 
-    comments = post.comments.select_related("author").all()
+    comments = post.comments.select_related(
+        "author"
+    ).order_by("-created_at")
 
     return render(
         request,
         "blog/post_detail.html",
         {
             "post": post,
-            "comment": comments,
+            "comments": comments,
             "comment_form": comment_form,
         },
     )
+
 
 def unique_post_slug(title, instance=None):
     base_slug = slugify(title) or "post"
@@ -82,6 +102,7 @@ def unique_post_slug(title, instance=None):
     counter = 1
 
     posts = Post.objects.all()
+
     if instance:
         posts = posts.exclude(pk=instance.pk)
 
@@ -91,25 +112,37 @@ def unique_post_slug(title, instance=None):
 
     return slug
 
+
 @login_required
 def post_create(request):
     if request.method == "POST":
         form = PostForm(request.POST, request.FILES)
+
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
             post.slug = unique_post_slug(post.title)
             post.save()
-            messages.success(request, "Your blog post was published.")
+
+            messages.success(
+                request,
+                "Your blog post was published.",
+            )
+
             return redirect(post.get_absolute_url())
+
     else:
         form = PostForm()
 
     return render(
         request,
         "blog/post_form.html",
-        {"form": form, "page_title": "Write a Blog"},
+        {
+            "form": form,
+            "page_title": "Write a Blog",
+        },
     )
+
 
 @login_required
 def post_edit(request, slug):
@@ -121,22 +154,35 @@ def post_edit(request, slug):
         )
 
     if request.method == "POST":
-        form = PostForm(request.POST, request.FILES, instance=post)
+        form = PostForm(
+            request.POST,
+            request.FILES,
+            instance=post,
+        )
+
         if form.is_valid():
             post = form.save(commit=False)
-
-            # Preserve the URL slug when the title changes.
             post.save()
-            messages.success(request, "Your blog post was updated.")
+
+            messages.success(
+                request,
+                "Your blog post was updated.",
+            )
+
             return redirect(post.get_absolute_url())
+
     else:
         form = PostForm(instance=post)
 
     return render(
         request,
         "blog/post_form.html",
-        {"form": form, "page_title": "Edit Blog"}
+        {
+            "form": form,
+            "page_title": "Edit Blog",
+        },
     )
+
 
 @login_required
 def post_delete(request, slug):
@@ -149,7 +195,12 @@ def post_delete(request, slug):
 
     if request.method == "POST":
         post.delete()
-        messages.success(request, "Your blog post was deleted.")
+
+        messages.success(
+            request,
+            "Your blog post was deleted.",
+        )
+
         return redirect("home")
 
     return render(
@@ -158,6 +209,7 @@ def post_delete(request, slug):
         {"post": post},
     )
 
+
 @login_required
 def comment_delete(request, pk):
     comment = get_object_or_404(
@@ -165,9 +217,7 @@ def comment_delete(request, pk):
         pk=pk,
     )
 
-    # A user may delete their own comment, or a post author
-    # may moderate comments on their own post.
-    if(
+    if (
         comment.author_id != request.user.id
         and comment.post.author_id != request.user.id
     ):
@@ -178,10 +228,15 @@ def comment_delete(request, pk):
     if request.method == "POST":
         post_url = comment.post.get_absolute_url()
         comment.delete()
+
         messages.success(request, "Comment deleted.")
+
         return redirect(post_url + "#comments")
 
-    return HttpResponseForbidden("POST request required.")
+    return HttpResponseForbidden(
+        "POST request required."
+    )
+
 
 def register(request):
     if request.user.is_authenticated:
@@ -193,11 +248,14 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
+
             messages.success(
                 request,
-                "Your account has been created successfully."
+                "Your account has been created successfully.",
             )
+
             return redirect("home")
+
     else:
         form = UserCreationForm()
 

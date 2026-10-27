@@ -1,37 +1,40 @@
+
 from django import forms
-from django_ckeditor_5.widgets import CKEditor5Widget
 from .models import Post, Comment
+from django_ckeditor_5.widgets import CKEditor5Widget
+
 
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ["title", "category", "image", "content"]
-        widgets = {
-            "title": forms.TextInput(attrs={
-                "placeholder": "Enter an engaging title",
-                "class": "form-input",
-                "content": CKEditor5Widget(config_name="extends"),
-            }),
-            "content": forms.Textarea(attrs={
-                "rows": 10,
-                "placeholder": "Write your article here...",
-                "class": "form-input",
-            }),
-            "image": forms.ClearableFileInput(attrs={
-                "accept": "image/*",
-            }),
-        }
+        fields = [
+            "title",
+            "category",
+            "image",
+            "content",
+        ]
 
 
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ["body"]
-        label = {"body": "Your Comment"}
+
+        labels = {
+            "body": "Body",
+        }
+
         widgets = {
-            "body": forms.Textarea(attrs={
-                "rows": 3,
-                "placeholder": "Share your thoughts...",
-                "class": "form-input",
-            }),
+            "body": forms.Textarea(
+                attrs={
+                    "placeholder": "Share your thoughts...",
+                    "rows": 3,
+                    "maxlength": 1000,
+                    "class": (
+                        "w-full border border-gray-300 "
+                        "rounded-lg p-3 focus:outline-none "
+                        "focus:ring-2 focus:ring-indigo-500"
+                    ),
+                }
+            ),
         }
