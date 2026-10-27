@@ -1,58 +1,212 @@
 
 {% extends "blog/base.html" %}
 
-{% block title %}{{ page_title }} | InkWell Blog{% endblock %}
+{% block title %}{{ page_title }} | Inkwell{% endblock %}
 
 {% block content %}
-<div class="mx-auto max-w-3xl">
-    <div class="mb-8">
-        <h1 class="text-3xl font-extrabold">{{ page_title }}</h1>
-        <p class="mt-2 text-slate-500">Turn your ideas into a story worth reading.</p>
-    </div>
+<div class="min-h-screen bg-slate-50 px-4 py-10 sm:py-14">
 
-    <form method="post" enctype="multipart/form-data"
-          class="space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
+    <div class="mx-auto max-w-4xl">
 
-        {% for field in form %}
-            <div>
-                <label for="{{ field.id_for_label }}"
-                       class="mb-2 block text-sm font-semibold text-slate-700">
-                    {{ field.label }}
-                </label>
-
-                {% if field.name == "image" %}
-                    {% if form.instance.image %}
-                        <img src="{{ form.instance.image.url }}"
-                             alt="Current cover image"
-                             class="mb-3 h-40 rounded-lg object-cover">
-                    {% endif %}
-                    {{ field }}
-                {% else %}
-                    {{ field }}
-                {% endif %}
-
-                {% if field.help_text %}
-                    <p class="mt-1 text-xs text-slate-500">{{ field.help_text }}</p>
-                {% endif %}
-
-                {% for error in field.errors %}
-                    <p class="mt-1 text-sm text-red-600">{{ error }}</p>
-                {% endfor %}
-            </div>
-        {% endfor %}
-
-        <div class="flex flex-wrap gap-3 border-t border-slate-100 pt-5">
-            <button type="submit"
-                    class="rounded-lg bg-indigo-600 px-6 py-3 font-semibold text-white hover:bg-indigo-700">
-                Save blog post
-            </button>
+        <!-- Page heading -->
+        <div class="mb-8">
             <a href="{% url 'home' %}"
-               class="rounded-lg border border-slate-300 px-6 py-3 font-semibold hover:bg-slate-50">
-                Cancel
+               class="mb-5 inline-flex items-center gap-2
+                      text-sm font-medium text-indigo-600
+                      hover:text-indigo-800">
+                &larr; Back to blogs
             </a>
+
+            <h1 class="text-3xl font-extrabold tracking-tight
+                       text-slate-900 sm:text-4xl">
+                {{ page_title|default:"Write a Blog" }}
+            </h1>
+
+            <p class="mt-3 text-base text-slate-500">
+                Turn your ideas into a story worth reading.
+            </p>
         </div>
-    </form>
+
+        <!-- Form card -->
+        <div class="rounded-2xl border border-slate-200
+                    bg-white p-5 shadow-sm sm:p-8">
+
+            {% if form.non_field_errors %}
+                <div class="mb-6 rounded-xl bg-red-50 p-4
+                            text-sm text-red-700">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <form method="post"
+                  enctype="multipart/form-data"
+                  class="space-y-7">
+
+                {% csrf_token %}
+
+                <!-- Title -->
+                <div>
+                    <label for="{{ form.title.id_for_label }}"
+                           class="mb-2 block text-sm
+                                  font-semibold text-slate-800">
+                        Blog Title
+                    </label>
+
+                    {{ form.title }}
+
+                    {% for error in form.title.errors %}
+                        <p class="mt-2 text-sm text-red-600">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+                </div>
+
+                <!-- Category -->
+                <div>
+                    <label for="{{ form.category.id_for_label }}"
+                           class="mb-2 block text-sm
+                                  font-semibold text-slate-800">
+                        Category
+                    </label>
+
+                    {{ form.category }}
+
+                    {% for error in form.category.errors %}
+                        <p class="mt-2 text-sm text-red-600">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+                </div>
+
+                <!-- Cover image -->
+                <div>
+                    <label for="{{ form.image.id_for_label }}"
+                           class="mb-2 block text-sm
+                                  font-semibold text-slate-800">
+                        Cover Image
+                    </label>
+
+                    {{ form.image }}
+
+                    {% if form.instance.image %}
+                        <div class="mt-4">
+                            <p class="mb-2 text-sm text-slate-500">
+                                Current cover image
+                            </p>
+                            <img src="{{ form.instance.image.url }}"
+                                 alt="Current cover"
+                                 class="h-48 w-full rounded-xl
+                                        object-cover sm:w-80">
+                        </div>
+                    {% endif %}
+
+                    {% for error in form.image.errors %}
+                        <p class="mt-2 text-sm text-red-600">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+                </div>
+
+                <!-- Content editor -->
+                <div>
+                    <label for="{{ form.content.id_for_label }}"
+                           class="mb-2 block text-sm
+                                  font-semibold text-slate-800">
+                        Blog Content
+                    </label>
+
+                    <div class="blog-editor">
+                        {{ form.content }}
+                    </div>
+
+                    {% for error in form.content.errors %}
+                        <p class="mt-2 text-sm text-red-600">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+                </div>
+
+                <!-- Actions -->
+                <div class="flex flex-col-reverse gap-3
+                            border-t border-slate-200 pt-6
+                            sm:flex-row sm:justify-end">
+
+                    <a href="{% url 'home' %}"
+                       class="inline-flex items-center
+                              justify-center rounded-xl
+                              border border-slate-300 px-6 py-3
+                              font-semibold text-slate-700
+                              hover:bg-slate-50">
+                        Cancel
+                    </a>
+
+                    <button type="submit"
+                            class="inline-flex items-center
+                                   justify-center rounded-xl
+                                   bg-indigo-600 px-7 py-3
+                                   font-semibold text-white
+                                   shadow-sm transition
+                                   hover:bg-indigo-700
+                                   focus:outline-none
+                                   focus:ring-4
+                                   focus:ring-indigo-200">
+                        {% if form.instance.pk %}
+                            Update Blog
+                        {% else %}
+                            Publish Blog
+                        {% endif %}
+                    </button>
+
+                </div>
+
+            </form>
+        </div>
+
+        <p class="mt-5 text-center text-sm text-slate-500">
+            Write something meaningful. Your story matters.
+        </p>
+
+    </div>
 </div>
+
+<style>
+    .blog-editor .ck-editor {
+        width: 100%;
+    }
+
+    .blog-editor .ck-editor__editable {
+        min-height: 320px;
+        padding: 16px 20px;
+    }
+
+    .blog-editor .ck.ck-toolbar {
+        border-color: #cbd5e1;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .blog-editor .ck.ck-editor__main > .ck-editor__editable {
+        border-color: #cbd5e1;
+        border-radius: 0 0 12px 12px;
+    }
+
+    .blog-editor .ck.ck-editor__main > .ck-editor__editable:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px #e0e7ff;
+    }
+
+    .blog-editor .ck-content {
+        font-size: 16px;
+        line-height: 1.75;
+    }
+
+    @media (max-width: 640px) {
+        .blog-editor .ck.ck-toolbar {
+            flex-wrap: wrap;
+        }
+
+        .blog-editor .ck-editor__editable {
+            min-height: 260px;
+        }
+    }
+</style>
 {% endblock %}
