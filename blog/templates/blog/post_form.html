@@ -4,36 +4,31 @@
 {% block title %}{{ page_title }} | Inkwell{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-slate-50 px-4 py-10 sm:py-14">
 
+<div class="min-h-screen bg-slate-50 px-4 py-10 sm:py-14">
     <div class="mx-auto max-w-4xl">
 
-        <!-- Page heading -->
+        <!-- Heading -->
         <div class="mb-8">
             <a href="{% url 'home' %}"
-               class="mb-5 inline-flex items-center gap-2
-                      text-sm font-medium text-indigo-600
-                      hover:text-indigo-800">
+               class="mb-5 inline-block text-sm font-semibold text-indigo-600 hover:text-indigo-800">
                 &larr; Back to blogs
             </a>
 
-            <h1 class="text-3xl font-extrabold tracking-tight
-                       text-slate-900 sm:text-4xl">
+            <h1 class="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
                 {{ page_title|default:"Write a Blog" }}
             </h1>
 
-            <p class="mt-3 text-base text-slate-500">
+            <p class="mt-3 text-slate-500">
                 Turn your ideas into a story worth reading.
             </p>
         </div>
 
-        <!-- Form card -->
-        <div class="rounded-2xl border border-slate-200
-                    bg-white p-5 shadow-sm sm:p-8">
+        <!-- Form Card -->
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
 
             {% if form.non_field_errors %}
-                <div class="mb-6 rounded-xl bg-red-50 p-4
-                            text-sm text-red-700">
+                <div class="mb-5 rounded-xl bg-red-50 p-4 text-sm text-red-600">
                     {{ form.non_field_errors }}
                 </div>
             {% endif %}
@@ -47,42 +42,35 @@
                 <!-- Title -->
                 <div>
                     <label for="{{ form.title.id_for_label }}"
-                           class="mb-2 block text-sm
-                                  font-semibold text-slate-800">
+                           class="mb-2 block text-sm font-semibold text-slate-800">
                         Blog Title
                     </label>
 
                     {{ form.title }}
 
                     {% for error in form.title.errors %}
-                        <p class="mt-2 text-sm text-red-600">
-                            {{ error }}
-                        </p>
+                        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
                     {% endfor %}
                 </div>
 
                 <!-- Category -->
                 <div>
                     <label for="{{ form.category.id_for_label }}"
-                           class="mb-2 block text-sm
-                                  font-semibold text-slate-800">
+                           class="mb-2 block text-sm font-semibold text-slate-800">
                         Category
                     </label>
 
                     {{ form.category }}
 
                     {% for error in form.category.errors %}
-                        <p class="mt-2 text-sm text-red-600">
-                            {{ error }}
-                        </p>
+                        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
                     {% endfor %}
                 </div>
 
-                <!-- Cover image -->
+                <!-- Cover Image -->
                 <div>
                     <label for="{{ form.image.id_for_label }}"
-                           class="mb-2 block text-sm
-                                  font-semibold text-slate-800">
+                           class="mb-2 block text-sm font-semibold text-slate-800">
                         Cover Image
                     </label>
 
@@ -90,66 +78,44 @@
 
                     {% if form.instance.image %}
                         <div class="mt-4">
-                            <p class="mb-2 text-sm text-slate-500">
-                                Current cover image
-                            </p>
+                            <p class="mb-2 text-sm text-slate-500">Current image</p>
                             <img src="{{ form.instance.image.url }}"
-                                 alt="Current cover"
-                                 class="h-48 w-full rounded-xl
-                                        object-cover sm:w-80">
+                                 alt="Current blog cover"
+                                 class="h-48 w-full rounded-xl object-cover sm:w-80">
                         </div>
                     {% endif %}
 
                     {% for error in form.image.errors %}
-                        <p class="mt-2 text-sm text-red-600">
-                            {{ error }}
-                        </p>
+                        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
                     {% endfor %}
                 </div>
 
-                <!-- Content editor -->
-                <div>
+                <!-- Blog Content -->
+                <div class="w-full min-w-0">
                     <label for="{{ form.content.id_for_label }}"
-                           class="mb-2 block text-sm
-                                  font-semibold text-slate-800">
+                           class="mb-3 block text-sm font-semibold text-slate-800">
                         Blog Content
                     </label>
 
-                    <div class="blog-editor">
+                    <div class="blog-editor w-full min-w-0">
                         {{ form.content }}
                     </div>
 
                     {% for error in form.content.errors %}
-                        <p class="mt-2 text-sm text-red-600">
-                            {{ error }}
-                        </p>
+                        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
                     {% endfor %}
                 </div>
 
-                <!-- Actions -->
-                <div class="flex flex-col-reverse gap-3
-                            border-t border-slate-200 pt-6
-                            sm:flex-row sm:justify-end">
+                <!-- Buttons -->
+                <div class="flex flex-col-reverse gap-3 border-t border-slate-200 pt-6 sm:flex-row sm:justify-end">
 
                     <a href="{% url 'home' %}"
-                       class="inline-flex items-center
-                              justify-center rounded-xl
-                              border border-slate-300 px-6 py-3
-                              font-semibold text-slate-700
-                              hover:bg-slate-50">
+                       class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-50">
                         Cancel
                     </a>
 
                     <button type="submit"
-                            class="inline-flex items-center
-                                   justify-center rounded-xl
-                                   bg-indigo-600 px-7 py-3
-                                   font-semibold text-white
-                                   shadow-sm transition
-                                   hover:bg-indigo-700
-                                   focus:outline-none
-                                   focus:ring-4
-                                   focus:ring-indigo-200">
+                            class="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-7 py-3 font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-200">
                         {% if form.instance.pk %}
                             Update Blog
                         {% else %}
@@ -170,28 +136,54 @@
 </div>
 
 <style>
-    .blog-editor .ck-editor {
+    /* Form fields */
+    input[name="title"],
+    select[name="category"] {
+        display: block;
         width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        padding: 12px 14px;
+        background: #fff;
+        color: #0f172a;
     }
 
-    .blog-editor .ck-editor__editable {
-        min-height: 320px;
-        padding: 16px 20px;
+    input[name="image"] {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        padding: 12px;
+        background: #f8fafc;
     }
 
-    .blog-editor .ck.ck-toolbar {
-        border-color: #cbd5e1;
-        border-radius: 12px 12px 0 0;
-    }
-
-    .blog-editor .ck.ck-editor__main > .ck-editor__editable {
-        border-color: #cbd5e1;
-        border-radius: 0 0 12px 12px;
-    }
-
-    .blog-editor .ck.ck-editor__main > .ck-editor__editable:focus {
+    input[name="title"]:focus,
+    select[name="category"]:focus {
+        outline: none;
         border-color: #6366f1;
         box-shadow: 0 0 0 3px #e0e7ff;
+    }
+
+    /* CKEditor full width */
+    .blog-editor,
+    .blog-editor .django-ckeditor-5,
+    .blog-editor .ck-editor {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .blog-editor .ck-editor__main {
+        width: 100% !important;
+    }
+
+    /* Actual editable content area */
+    .blog-editor .ck-editor__editable_inline {
+        min-height: 350px !important;
+        padding: 16px 20px !important;
+        box-sizing: border-box !important;
     }
 
     .blog-editor .ck-content {
@@ -199,14 +191,31 @@
         line-height: 1.75;
     }
 
+    .blog-editor .ck.ck-toolbar {
+        border-color: #cbd5e1;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .blog-editor .ck.ck-editor__main > .ck-editor__editable {
+        border-color: #cbd5e1;
+        border-radius: 0 0 10px 10px;
+    }
+
+    .blog-editor .ck.ck-editor__main > .ck-editor__editable:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 2px #e0e7ff;
+    }
+
     @media (max-width: 640px) {
         .blog-editor .ck.ck-toolbar {
             flex-wrap: wrap;
         }
 
-        .blog-editor .ck-editor__editable {
-            min-height: 260px;
+        .blog-editor .ck-editor__editable_inline {
+            min-height: 280px !important;
+            padding: 12px !important;
         }
     }
 </style>
+
 {% endblock %}
