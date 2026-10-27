@@ -25,7 +25,11 @@ SECRET_KEY = "django-insecure-hlz&7%(ta@$v*gwl3j*y=ewqmf_2b@**j5zuthzou&gq&0q&1q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "inkwell-django-blog-f50u.onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
 
 
 # Application definition
